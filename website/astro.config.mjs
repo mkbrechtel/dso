@@ -6,10 +6,7 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Docs with Tailwind',
-			social: {
-				github: 'https://github.com/withastro/starlight',
-			},
+			title: 'Data Science Orchestrator',
 			// sidebar: [
 			// 	{
 			// 		label: 'Guides',
@@ -23,6 +20,11 @@ export default defineConfig({
 			// 		autogenerate: { directory: 'reference' },
 			// 	},
 			// ],
+			logo: {
+				src: './src/assets/DZG_icon.svg',
+			},
+			favicon: '/favicon-dzg.png',
+			//themes: ['starlight-dark', 'starlight-light'],
 			customCss: ['./src/tailwind.css'],
 		}),
 		tailwind({ applyBaseStyles: false }),
