@@ -22,7 +22,6 @@ export default defineConfig({
 			// ],
 			components: {
 				SiteTitle: './src/components/SiteTitle.astro',
-				ThemeSelect: './src/components/ThemeSelect.astro',
 			},
 			social: {
 				'email': 'mailto:markus.brechtel@uk-koeln.de',
