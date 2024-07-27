@@ -6,7 +6,7 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Data Science Orchestrator',
+			title: 'DZG Data Science Orchestrator',
 			// sidebar: [
 			// 	{
 			// 		label: 'Guides',
@@ -20,8 +20,15 @@ export default defineConfig({
 			// 		autogenerate: { directory: 'reference' },
 			// 	},
 			// ],
+			components: {
+				SiteTitle: './src/components/SiteTitle.astro',
+				ThemeSelect: './src/components/ThemeSelect.astro',
+			},
 			logo: {
 				src: './src/assets/DZG_icon.svg',
+			},
+			social: {
+				'email': 'mailto:markus.brechtel@uk-koeln.de',
 			},
 			favicon: '/favicon-dzg.png',
 			//themes: ['starlight-dark', 'starlight-light'],
