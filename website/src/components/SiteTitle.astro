@@ -1,20 +1,18 @@
 ---
 import logo from '../assets/DZG_icon.svg'
-import { logos } from 'virtual:starlight/user-images';
 import config from 'virtual:starlight/user-config';
 import type { Props } from '../props';
-const { siteTitle, siteTitleHref } = Astro.props;
+const { siteTitleHref } = Astro.props;
 ---
 
 <a href={siteTitleHref} class="site-title sl-flex">
 	<img
-		class:list={{ 'light:sl-hidden': !('src' in config.logo) }}
-		alt={config.logo.alt}
-		src={logos.dark.src}
-		width={logos.dark.width}
-		height={logos.dark.height}
+		alt="DZG logo"
+		src={logo.src}
+		width={logo.width}
+		height={logo.height}
 	/>
-	<span class:list={{ 'sr-only': config.logo?.replacesTitle }}>
+	<span>
 		Data Science Orchestrator
 	</span>
 </a>
