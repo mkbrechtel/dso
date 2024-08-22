@@ -1,0 +1,16 @@
+---
+
+- name: install docker linux packages 
+  apt:
+    update_cache: true
+    pkg:
+      - docker.io
+      - python3-docker
+      - docker-compose
+      - apparmor
+
+- name: start docker service
+  service:
+    name: docker
+    state: started
+

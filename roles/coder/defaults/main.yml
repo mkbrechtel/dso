@@ -3,3 +3,6 @@ coder_action: "install"
 coder_http_address: "0.0.0.0:80"
 coder_tls_enable: false
 coder_tls_address: "0.0.0.0:443"
+coder_access_url: https://{{coder_service_name}}
+coder_service_name: coder.{{dso_service_name}}
+dso_service_name: "{{ inventory_hostname }}"
