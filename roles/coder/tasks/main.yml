@@ -1,0 +1,8 @@
+---
+- name: Install Coder
+  ansible.builtin.include_tasks: install.yml
+  when: coder_action == 'install'
+
+- name: Uninstall Coder
+  ansible.builtin.include_tasks: uninstall.yml
+  when: coder_action == 'uninstall'

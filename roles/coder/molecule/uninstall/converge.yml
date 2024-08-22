@@ -1,0 +1,20 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Coder v2 (preparing for uninstall test)
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        coder_action: "install"
+        coder_access_url: "https://your-coder-access-url.example.com"
+      tags: molecule-idempotence-notest
+
+    - name: Uninstall Coder v2
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        coder_action: "uninstall"
+        coder_access_url: "https://your-coder-access-url.example.com"
+      tags: molecule-idempotence-notest

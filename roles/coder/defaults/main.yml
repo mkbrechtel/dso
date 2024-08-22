@@ -1,0 +1,5 @@
+---
+coder_action: "install"
+coder_http_address: "0.0.0.0:80"
+coder_tls_enable: false
+coder_tls_address: "0.0.0.0:443"

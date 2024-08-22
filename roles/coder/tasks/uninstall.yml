@@ -1,0 +1,21 @@
+---
+- name: Stop and disable Coder v2 service
+  ansible.builtin.systemd:
+    name: coder
+    state: stopped
+    enabled: false
+
+- name: Remove Coder v2 .deb package
+  ansible.builtin.apt:
+    name: coder
+    state: absent
+
+- name: Remove coder.env configuration file
+  ansible.builtin.file:
+    path: /etc/coder.d/coder.env
+    state: absent
+
+- name: Remove /etc/coder directory if empty
+  ansible.builtin.file:
+    path: /etc/coder.d
+    state: absent

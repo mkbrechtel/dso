@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  filter:
+    name: Pre-Test Filter
+    runs-on: ubuntu-latest
+    outputs:
+      default: ${{ steps.filter.outputs.default }}
+      uninstall: ${{ steps.filter.outputs.uninstall }}
+    steps:
+      - name: Filter paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            default:
+              - 'tasks/install.yml'
+              - 'tasks/main.yml'
+              - 'molecule/default/**'
+              - 'handlers/**'
+              - 'meta/**'
+              - 'templates/**'
+              - 'tests/**'
+              - 'defaults/**'
+              - 'vars/**'
+            uninstall:
+              - 'tasks/uninstall.yml'
+              - 'tasks/main.yml'
+              - 'molecule/uninstall/**'
+              - 'handlers/**'
+              - 'meta/**'
+              - 'templates/**'
+              - 'tests/**'
+              - 'defaults/**'
+              - 'vars/**'
+
+  test_default:
+    name: Molecule CI Tests - Default
+    needs: filter
+    if: needs.filter.outputs.default == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install "molecule[ansible,lint]"
+          pip install molecule-docker
+
+      - name: Run Molecule tests - Default
+        run: |
+          molecule test -s default
+
+  test_uninstall:
+    name: Molecule CI Tests - Uninstall
+    needs: filter
+    if: needs.filter.outputs.uninstall == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install "molecule[ansible,lint]"
+          pip install molecule-docker
+
+      - name: Run Molecule tests - Uninstall
+        run: |
+          molecule test -s uninstall

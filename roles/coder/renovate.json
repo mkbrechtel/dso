@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "reviewers": ["thehedgefrog"],
+  "assignees": ["thehedgefrog"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor","patch"],
+      "automerge": true
+    },
+    {
+      "matchDepTypes": ["action"],
+      "addLabels": ["actions"]
+    }
+  ]
+}

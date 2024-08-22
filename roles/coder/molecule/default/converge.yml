@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    coder_action: "install"
+    coder_access_url: "https://your-coder-access-url.example.com"
+  tasks:
+    - name: Include thehedgefrog.coder_v2_install
+      ansible.builtin.include_role:
+        name: thehedgefrog.coder_v2_install

@@ -1,0 +1,100 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg2
+      - ca-certificates
+    state: present
+
+- name: Fetch latest Coder release from GitHub
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/coder/coder/releases/latest
+    return_content: true
+    headers:
+      Accept: application/vnd.github+json
+  register: github_release
+
+- name: Set deb_package_name variable based on architecture
+  ansible.builtin.set_fact:
+    deb_package_name: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
+
+- name: Download Coder v2 .deb package
+  ansible.builtin.get_url:
+    url: "{{ github_release.json.assets | selectattr('name', 'match', 'coder_.*_linux_' + deb_package_name + '\\.deb$') \
+         | map(attribute='browser_download_url') | first }}"
+    dest: "/tmp/coder.deb"
+    mode: '0755'
+
+- name: Install Coder v2 .deb package
+  ansible.builtin.apt:
+    deb: "/tmp/coder.deb"
+    state: present
+
+- name: Extract the port number from coder_http_address
+  ansible.builtin.set_fact:
+    coder_http_port: "{{ coder_http_address.split(':')[-1] | int }}"
+
+- name: Find the path of the 'coder' executable
+  ansible.builtin.command: which coder
+  register: coder_which_result
+  changed_when: false
+  ignore_errors: true
+  when: coder_http_port | int < 1024
+
+- name: Resolve the full path of the 'coder' executable
+  ansible.builtin.command: readlink -f "{{ coder_which_result.stdout }}"
+  register: coder_full_path_result
+  changed_when: false
+  when:
+    - coder_which_result.stdout != ""
+    - coder_http_port | int < 1024
+  ignore_errors: true
+
+- name: Check current capabilities of 'coder' executable
+  ansible.builtin.command:
+    cmd: getcap "{{ coder_full_path_result.stdout }}" || echo ''
+  register: coder_capabilities_result
+  changed_when: false
+  when:
+    - coder_full_path_result.stdout != ""
+    - coder_http_port | int < 1024
+
+- name: Set 'cap_net_bind_service=+ep' capability on the 'coder' executable if needed
+  ansible.builtin.shell: |
+      if ! getcap "{{ coder_full_path_result.stdout }}" | grep -q "cap_net_bind_service=+ep"; then
+        setcap 'cap_net_bind_service=+ep' "{{ coder_full_path_result.stdout }}"
+        getcap "{{ coder_full_path_result.stdout }}" > /tmp/coder_capabilities
+      fi
+  args:
+    creates: /tmp/coder_capabilities
+  when:
+    - coder_full_path_result.stdout != ""
+    - coder_http_port | int < 1024
+
+- name: Create /etc/coder directory
+  ansible.builtin.file:
+    path: /etc/coder.d
+    state: directory
+    mode: '0755'
+
+- name: Create coder.env configuration file
+  ansible.builtin.template:
+    src: coder.env.j2
+    dest: /etc/coder.d/coder.env
+    mode: '0644'
+  notify: Restart Coder
+
+- name: Enable and start Coder v2 service
+  ansible.builtin.systemd:
+    name: coder
+    state: started
+    enabled: true
+  notify: Restart Coder
+
+- name: Flush handlers
+  meta: flush_handlers

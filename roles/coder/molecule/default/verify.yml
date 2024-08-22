@@ -1,0 +1,16 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Check if Coder service is running
+      ansible.builtin.systemd:
+        name: coder
+        state: started
+      register: coder_service_result
+
+    - name: Assert Coder service is running
+      ansible.builtin.assert:
+        that:
+          - coder_service_result is success
