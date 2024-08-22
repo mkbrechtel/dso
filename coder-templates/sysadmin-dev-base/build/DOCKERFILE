@@ -1,0 +1,29 @@
+# Verwende ein Ubuntu-Image als Basis
+FROM ubuntu:22.04
+
+# Setze Umgebungsvariablen um interaktive Abfragen zu vermeiden
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update und installiere Tools
+RUN apt-get update && apt-get install -y \
+    ansible \
+    terraform \
+    curl \
+    vim \
+    jq \
+    python3-pip \
+    git \
+    tmux \
+    htop \
+    nmap \
+    net-tools \
+    iproute2 \
+    kubectl \
+    docker-compose \
+    azure-cli \
+    git-lfs \
+    zip \
+    unzip \
+    fail2ban \
+    dnsutils \
+    && rm -rf /var/lib/apt/lists/*
