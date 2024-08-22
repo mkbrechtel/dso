@@ -3,6 +3,14 @@
   ansible.builtin.include_tasks: install.yml
   when: coder_action == 'install'
 
+- name: Add coder user to docker group
+  ansible.builtin.user:
+    name: coder
+    groups: docker
+    append: yes
+  notify: Restart Coder
+
 - name: Uninstall Coder
   ansible.builtin.include_tasks: uninstall.yml
   when: coder_action == 'uninstall'
+

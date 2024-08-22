@@ -3,5 +3,5 @@
 - hosts: dso_servers
   remote_user: root
   roles:
-    - coder
     - docker
+    - coder
